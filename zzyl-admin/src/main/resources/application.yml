@@ -135,8 +135,8 @@ xss:
 # 阿里云OSS相关配置
 aliyun:
   oss:
-    endpoint: https://oss-cn-beijing.aliyuncs.com
-    bucketName: zznursing
+    endpoint: https://oss-cn-shenzhen.aliyuncs.com
+    bucketName: java-ai-ohc
 
 dept:
   nursingId: 201

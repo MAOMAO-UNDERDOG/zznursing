@@ -67,4 +67,12 @@ public interface RoomMapper extends BaseMapper<Room>
     List<RoomVo> selectByFloorId(Long floorId);
 
     List<RoomVo> selectByFloorIdWithNur(Long floorId);
+
+    /**
+     * 根据房间 id 查询房间数据（楼层、房间、价格）
+     *
+     * @param id 房间id
+     * @return
+     */
+    RoomVo getRoomById(Long id);
 }
