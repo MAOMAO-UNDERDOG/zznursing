@@ -2,14 +2,18 @@ package com.zzyl.nursing.service.impl;
 
 import java.util.Arrays;
 import java.util.List;
+
+import cn.hutool.core.util.ObjectUtil;
 import com.zzyl.common.utils.DateUtils;
 import com.zzyl.nursing.vo.NursingProjectVo;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import com.zzyl.nursing.mapper.NursingProjectMapper;
 import com.zzyl.nursing.domain.NursingProject;
 import com.zzyl.nursing.service.INursingProjectService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import static com.zzyl.common.constant.CacheConstants.CACHE_PROJECT_ALL_KEY;
 
 /**
  * 护理项目Service业务层处理
@@ -22,6 +26,10 @@ public class NursingProjectServiceImpl extends ServiceImpl<NursingProjectMapper,
 {
     @Autowired
     private NursingProjectMapper nursingProjectMapper;
+
+    @Autowired
+    private RedisTemplate<Object, Object> redisTemplate;
+
 
     /**
      * 查询护理项目
@@ -56,6 +64,7 @@ public class NursingProjectServiceImpl extends ServiceImpl<NursingProjectMapper,
     @Override
     public int insertNursingProject(NursingProject nursingProject)
     {
+        deleteCache();
         return save(nursingProject) ? 1 : 0;
     }
 
@@ -68,6 +77,7 @@ public class NursingProjectServiceImpl extends ServiceImpl<NursingProjectMapper,
     @Override
     public int updateNursingProject(NursingProject nursingProject)
     {
+        deleteCache();
         return updateById(nursingProject) ? 1 : 0;
     }
 
@@ -80,6 +90,7 @@ public class NursingProjectServiceImpl extends ServiceImpl<NursingProjectMapper,
     @Override
     public int deleteNursingProjectByIds(Long[] ids)
     {
+        deleteCache();
         return removeByIds(Arrays.asList(ids)) ? 1 : 0;
     }
 
@@ -92,6 +103,7 @@ public class NursingProjectServiceImpl extends ServiceImpl<NursingProjectMapper,
     @Override
     public int deleteNursingProjectById(Long id)
     {
+        deleteCache();
         return removeById(id) ? 1 : 0;
     }
 
@@ -102,6 +114,18 @@ public class NursingProjectServiceImpl extends ServiceImpl<NursingProjectMapper,
      */
     @Override
     public List<NursingProjectVo> getAll() {
+        List<NursingProjectVo> list = (List<NursingProjectVo>) redisTemplate.opsForValue().get(CACHE_PROJECT_ALL_KEY);
+        if(ObjectUtil.isNotEmpty(list)){
+            return list;
+        }
+        redisTemplate.opsForValue().set(CACHE_PROJECT_ALL_KEY, list);
         return nursingProjectMapper.getAll();
+    }
+
+    /**
+     * 删除缓存
+     */
+    public void deleteCache() {
+        redisTemplate.delete(CACHE_PROJECT_ALL_KEY);
     }
 }
