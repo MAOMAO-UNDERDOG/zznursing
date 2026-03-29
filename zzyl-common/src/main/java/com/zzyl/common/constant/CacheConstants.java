@@ -47,4 +47,5 @@ public class CacheConstants
     public static final String CACHE_PROJECT_ALL_KEY = "nursingProject:all";
 
     public static final String CACHE_PLAN_ALL_KEY = "nursingPlan:all";
+    public static final String HEALTH_REPORT = "healthReport";
 }
